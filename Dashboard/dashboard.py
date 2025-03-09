@@ -12,8 +12,8 @@ st.set_page_config(
 )
 
 # Load cleaned data from GitHub repo
-DAY_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Data/cleaned_day_df.csv'
-HOUR_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Data/cleaned_hour.csv'
+DAY_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Dashboard/cleaned_day_df.csv'
+HOUR_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Dashboard/cleaned_hour.csv'
 
 day_df_clean = pd.read_csv(DAY_CSV_URL)
 hour_df_clean = pd.read_csv(HOUR_CSV_URL)

@@ -44,7 +44,7 @@ def create_yearly_data(df):
 
 # Sidebar
 with st.sidebar:
-    st.image("https://svgsilh.com/svg/307877.svg", caption="Bike Sharing", use_column_width=True)
+    st.image("https://svgsilh.com/svg/307877.svg", caption="Bike Sharing", use_container_width=True)
     st.title('Capital Bikeshare Dashboard')
     st.markdown("[Dataset Source](https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset)")
     st.markdown("[Source Code](https://github.com/Neldi30/Data.csv.git)")

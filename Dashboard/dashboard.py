@@ -6,7 +6,7 @@ import seaborn as sns
 sns.set(style='dark')
 
 st.set_page_config(
-    page_title="Bike Sharing Dashboard Dicoding❤️",
+    page_title='🚴 Bike Sharing Dashboard 🚴',
     page_icon=":bike:",
     initial_sidebar_state="expanded"
 )
@@ -26,6 +26,7 @@ def create_hourly_data(df):
     }).reset_index()
     return hourly_data
 
+
 def create_working_day_data(df):
     working_day_data = df.groupby(by='Working Day').agg({
         'Casual': 'mean',
@@ -33,6 +34,7 @@ def create_working_day_data(df):
         'Total': 'mean'
     }).reset_index()
     return working_day_data
+
 
 def create_yearly_data(df):
     yearly_data = df.groupby(by=['Year', 'Month']).agg({
@@ -53,6 +55,10 @@ with st.sidebar:
 hourly_data = create_hourly_data(hour_df_clean)
 working_day_data = create_working_day_data(hour_df_clean)
 yearly_data = create_yearly_data(day_df_clean)
+
+# Pilihan Tahun Interaktif
+year_option = st.sidebar.selectbox('Pilih Tahun:', (2011, 2012))
+filtered_yearly_data = yearly_data[yearly_data['Year'] == year_option]
 
 # Menghitung total, casual, dan registered untuk plot hourly
 hourly_counts = hourly_data['Casual'] + hourly_data['Registered']
@@ -96,14 +102,26 @@ st.pyplot(fig)
 
 st.divider()
 
-st.subheader("Peminjaman Sepeda Tahun 2011 dan 2012 ")
+st.subheader(f"Peminjaman Sepeda Tahun {year_option}")
 fig, ax = plt.subplots(figsize=(12, 6))
-sns.lineplot(data=yearly_data, x='Date', y='Total', marker='o', color='red', ax=ax)
+sns.lineplot(data=filtered_yearly_data, x='Date', y='Total', marker='o', color='red', ax=ax)
 
-ax.set_title('Perkembangan Peminjaman Sepeda (Januari 2011 - Desember 2012)')
+ax.set_title(f'Perkembangan Peminjaman Sepeda Tahun {year_option}')
 ax.set_xlabel('Bulan')
 ax.set_ylabel('Jumlah Peminjaman')
 plt.xticks(rotation=45)
 ax.grid(True)
 
+st.pyplot(fig)
+
+st.divider()
+
+# Fitur Baru: Distribusi Peminjaman Sepeda per Musim
+st.subheader('Distribusi Peminjaman Sepeda per Musim')
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.barplot(x='Season', y='Total', data=day_df_clean, ax=ax)
+
+ax.set_title('Distribusi Peminjaman Sepeda per Musim')
+ax.set_xlabel('Musim')
+ax.set_ylabel('Total Peminjaman')
 st.pyplot(fig)

@@ -11,9 +11,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Load cleaned data
-day_df_clean = pd.read_csv('C:/Users/taufi/streamlit_dashboard/cleaned_day_df.csv')
-hour_df_clean = pd.read_csv('C:/Users/taufi/streamlit_dashboard/cleaned_hour.csv')
+# Load cleaned data from GitHub repo
+DAY_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Data/cleaned_day_df.csv'
+HOUR_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Data/cleaned_hour.csv'
+
+day_df_clean = pd.read_csv(DAY_CSV_URL)
+hour_df_clean = pd.read_csv(HOUR_CSV_URL)
 
 # Data preparation functions
 def create_hourly_data(df):
@@ -45,7 +48,6 @@ with st.sidebar:
     st.title('Capital Bikeshare Dashboard')
     st.markdown("[Dataset Source](https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset)")
     st.markdown("[Source Code](https://github.com/Neldi30/Data.csv.git)")
-
 
 # Data preparation
 hourly_data = create_hourly_data(hour_df_clean)

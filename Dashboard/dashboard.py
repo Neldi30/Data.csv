@@ -51,10 +51,16 @@ with st.sidebar:
     st.markdown("[Dataset Source](https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset)")
     st.markdown("[Source Code](https://github.com/Neldi30/Data.csv.git)")
 
+# Pilihan Tanggal Interaktif
+date_option = st.sidebar.date_input('Pilih Tanggal:', pd.to_datetime('2011-01-01'))
+
 # Data preparation
 hourly_data = create_hourly_data(hour_df_clean)
 working_day_data = create_working_day_data(hour_df_clean)
 yearly_data = create_yearly_data(day_df_clean)
+
+# Filter data berdasarkan tanggal
+filtered_day_data = day_df_clean[day_df_clean['Date'] == pd.to_datetime(date_option)]
 
 # Pilihan Tahun Interaktif
 year_option = st.sidebar.selectbox('Pilih Tahun:', (2011, 2012))
@@ -125,3 +131,10 @@ ax.set_title('Distribusi Peminjaman Sepeda per Musim')
 ax.set_xlabel('Musim')
 ax.set_ylabel('Total Peminjaman')
 st.pyplot(fig)
+
+# Tampilkan data berdasarkan tanggal terpilih
+if not filtered_day_data.empty:
+    st.subheader(f'Data Peminjaman Sepeda pada Tanggal {date_option}')
+    st.write(filtered_day_data)
+else:
+    st.warning(f'Tidak ada data untuk tanggal {date_option}')

@@ -12,8 +12,8 @@ st.set_page_config(
 )
 
 # Load cleaned data from GitHub repo
-DAY_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Dashboard/cleaned_day_df.csv'
-HOUR_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/main/Dashboard/cleaned_hour.csv'
+DAY_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/refs/heads/main/Dashboard/cleaned_day_df.csv'
+HOUR_CSV_URL = 'https://raw.githubusercontent.com/Neldi30/Data.csv/refs/heads/main/Dashboard/cleaned_hour.csv'
 
 day_df_clean = pd.read_csv(DAY_CSV_URL)
 hour_df_clean = pd.read_csv(HOUR_CSV_URL)
@@ -51,20 +51,28 @@ with st.sidebar:
     st.markdown("[Dataset Source](https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset)")
     st.markdown("[Source Code](https://github.com/Neldi30/Data.csv.git)")
 
-# Pilihan Tanggal Interaktif
-date_option = st.sidebar.date_input('Pilih Tanggal:', pd.to_datetime('2011-01-01'))
+# Checkbox untuk filter tahun dan musim
+use_year_filter = st.sidebar.checkbox('Filter berdasarkan Tahun')
+use_season_filter = st.sidebar.checkbox('Filter berdasarkan Musim')
+
+# Pilihan Tahun Interaktif
+if use_year_filter:
+    year_option = st.sidebar.selectbox('Pilih Tahun:', ('All Year', 2011, 2012))
+
+# Pilihan Musim Interaktif
+if use_season_filter:
+    season_option = st.sidebar.selectbox('Pilih Musim:', ['Semua Musim', 'Spring', 'Summer', 'Fall', 'Winter'])
 
 # Data preparation
 hourly_data = create_hourly_data(hour_df_clean)
 working_day_data = create_working_day_data(hour_df_clean)
 yearly_data = create_yearly_data(day_df_clean)
 
-# Filter data berdasarkan tanggal
-filtered_day_data = day_df_clean[day_df_clean['Date'] == pd.to_datetime(date_option)]
-
-# Pilihan Tahun Interaktif
-year_option = st.sidebar.selectbox('Pilih Tahun:', (2011, 2012))
-filtered_yearly_data = yearly_data[yearly_data['Year'] == year_option]
+# Filter data berdasarkan tahun jika dipilih
+if use_year_filter and year_option != 'All Year':
+    filtered_yearly_data = yearly_data[yearly_data['Year'] == year_option]
+else:
+    filtered_yearly_data = yearly_data
 
 # Menghitung total, casual, dan registered untuk plot hourly
 hourly_counts = hourly_data['Casual'] + hourly_data['Registered']
@@ -108,11 +116,11 @@ st.pyplot(fig)
 
 st.divider()
 
-st.subheader(f"Peminjaman Sepeda Tahun {year_option}")
+st.subheader(f"Peminjaman Sepeda")
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.lineplot(data=filtered_yearly_data, x='Date', y='Total', marker='o', color='red', ax=ax)
 
-ax.set_title(f'Perkembangan Peminjaman Sepeda Tahun {year_option}')
+ax.set_title(f'Perkembangan Peminjaman Sepeda')
 ax.set_xlabel('Bulan')
 ax.set_ylabel('Jumlah Peminjaman')
 plt.xticks(rotation=45)
@@ -124,17 +132,15 @@ st.divider()
 
 # Fitur Baru: Distribusi Peminjaman Sepeda per Musim
 st.subheader('Distribusi Peminjaman Sepeda per Musim')
+if use_season_filter and season_option != 'Semua Musim':
+    filtered_season_data = day_df_clean[day_df_clean['Season'] == season_option]
+else:
+    filtered_season_data = day_df_clean
+
 fig, ax = plt.subplots(figsize=(8, 6))
-sns.barplot(x='Season', y='Total', data=day_df_clean, ax=ax)
+sns.barplot(x='Season', y='Total', data=filtered_season_data, ax=ax)
 
 ax.set_title('Distribusi Peminjaman Sepeda per Musim')
 ax.set_xlabel('Musim')
 ax.set_ylabel('Total Peminjaman')
 st.pyplot(fig)
-
-# Tampilkan data berdasarkan tanggal terpilih
-if not filtered_day_data.empty:
-    st.subheader(f'Data Peminjaman Sepeda pada Tanggal {date_option}')
-    st.write(filtered_day_data)
-else:
-    st.warning(f'Tidak ada data untuk tanggal {date_option}')
